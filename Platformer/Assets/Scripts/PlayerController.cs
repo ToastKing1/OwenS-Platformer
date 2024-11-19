@@ -31,20 +31,11 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {
-
-
-
-
         return false;
     }
-
-
-
-
-
     public bool IsGrounded()
     {
-        return false;
+        return true;
     }
 
     public FacingDirection GetFacingDirection()
