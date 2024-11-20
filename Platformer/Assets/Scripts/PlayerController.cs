@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     public bool isJumping;
     public float maxJumpTime;
 
-    public float gravity = -2;
+    public float gravity = 2;
 
     public float currentJumpTime;
 
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
             playerInput = Vector3.zero;
         }
 
-        /*
+        
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             isJumping = true;
@@ -61,9 +61,10 @@ public class PlayerController : MonoBehaviour
         
             if (!IsGrounded() && !isJumping)
             {
-                playerInput.y += gravity;
+                playerInput.y -= gravity;
             }
-        */
+
+        
         
         velocity = playerInput;
         MovementUpdate(playerInput);
@@ -71,10 +72,10 @@ public class PlayerController : MonoBehaviour
 
     private void MovementUpdate(Vector2 playerInput)
     {
-        /*
-        if (isJumping && maxJumpTime > currentJumpTime)
+        
+        if (isJumping == true && maxJumpTime > currentJumpTime)
         {
-            playerInput += 2 * Vector2.up * Time.deltaTime;
+            playerInput.y += 2;
             currentJumpTime += 0.5f * Time.deltaTime;
         }
         else
@@ -82,19 +83,14 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
             currentJumpTime = 0;
         }
-        */
 
-        transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
+        Debug.Log(playerInput.y);
+
+        transform.position += new Vector3(playerInput.x*2, playerInput.y) * Time.deltaTime;
 
 
         Debug.Log(IsGrounded());
     }
-    /*
-    if (isJumping)
-        {
-            return false;
-        }
-    */
 public bool IsWalking()
     {
         if (velocity.x > 0 || velocity.x < 0){
@@ -107,13 +103,14 @@ public bool IsWalking()
     }
     public bool IsGrounded()
     {
+       
 
-        
+
         Debug.DrawRay(transform.position, Vector3.down, Color.red);
 
         
 
-        return Physics2D.Raycast(transform.position, Vector3.down, 0.1f);
+        return Physics2D.Raycast(transform.position, Vector3.down, 0.7f);
 
 
     }
