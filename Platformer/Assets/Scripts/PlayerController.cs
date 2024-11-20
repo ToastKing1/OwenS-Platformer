@@ -4,8 +4,22 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Vector2 playerMovementInput;
+    public Vector2 velocity;
     public Rigidbody2D rb;
+
+    public bool isJumping;
+    public float maxJumpTime;
+
+    public float gravity = -2;
+
+    public float currentJumpTime;
+
+    /*
+    public float timeToReachMaxSpeed;
+    public float maxSpeed;
+
+    private float acceleration;
+    */
     public enum FacingDirection
     {
         left, right
@@ -14,7 +28,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //acceleration = maxSpeed / timeToReachMaxSpeed;
+
     }
 
     // Update is called once per frame
@@ -26,30 +41,63 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKey(KeyCode.A))
         {
-            playerInput = Vector3.left * 2;
+            playerInput = Vector3.left;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            playerInput = Vector3.right * 2;
+            playerInput = Vector3.right;
         }
         else
         {
             playerInput = Vector3.zero;
         }
-        playerMovementInput = playerInput;
+
+        /*
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        {
+            isJumping = true;
+        }
+
+        
+            if (!IsGrounded() && !isJumping)
+            {
+                playerInput.y += gravity;
+            }
+        */
+        
+        velocity = playerInput;
         MovementUpdate(playerInput);
     }
 
     private void MovementUpdate(Vector2 playerInput)
     {
+        /*
+        if (isJumping && maxJumpTime > currentJumpTime)
+        {
+            playerInput += 2 * Vector2.up * Time.deltaTime;
+            currentJumpTime += 0.5f * Time.deltaTime;
+        }
+        else
+        {
+            isJumping = false;
+            currentJumpTime = 0;
+        }
+        */
+
         transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
+
 
         Debug.Log(IsGrounded());
     }
-
-    public bool IsWalking()
+    /*
+    if (isJumping)
+        {
+            return false;
+        }
+    */
+public bool IsWalking()
     {
-        if (playerMovementInput.x > 0 || playerMovementInput.x < 0){
+        if (velocity.x > 0 || velocity.x < 0){
             return true;
         }
         else
@@ -59,16 +107,24 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
+
+        
+        Debug.DrawRay(transform.position, Vector3.down, Color.red);
+
+        
+
         return Physics2D.Raycast(transform.position, Vector3.down, 0.1f);
+
+
     }
 
     public FacingDirection GetFacingDirection()
     {
-        if (playerMovementInput.x > 0)
+        if (velocity.x > 0)
         {
             return FacingDirection.right;
         }
-        if (playerMovementInput.x < 0)
+        if (velocity.x < 0)
         {
             return FacingDirection.left;
         }
