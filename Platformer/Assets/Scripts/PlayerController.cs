@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
 
+        Debug.Log(IsGrounded());
     }
 
     public bool IsWalking()
@@ -58,8 +59,7 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-
-        return false;
+        return Physics2D.Raycast(transform.position, Vector3.down, 0.1f);
     }
 
     public FacingDirection GetFacingDirection()

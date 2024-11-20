@@ -19,6 +19,7 @@ public class PlayerVisuals : MonoBehaviour
     {
         isWalkingHash = Animator.StringToHash("IsWalking");
         isGroundedHash = Animator.StringToHash("IsGrounded");
+
     }
 
     // Update is called once per frame
