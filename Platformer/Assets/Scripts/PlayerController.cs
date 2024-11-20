@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public Vector2 playerMovementInput;
+    public Rigidbody2D rb;
     public enum FacingDirection
     {
         left, right
@@ -21,17 +23,38 @@ public class PlayerController : MonoBehaviour
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
         Vector2 playerInput = new Vector2();
+        
+        if (Input.GetKey(KeyCode.A))
+        {
+            playerInput = Vector3.left * 2;
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            playerInput = Vector3.right * 2;
+        }
+        else
+        {
+            playerInput = Vector3.zero;
+        }
+        playerMovementInput = playerInput;
         MovementUpdate(playerInput);
     }
 
     private void MovementUpdate(Vector2 playerInput)
     {
+        transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
 
     }
 
     public bool IsWalking()
     {
-        return false;
+        if (playerMovementInput.x > 0 || playerMovementInput.x < 0){
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     public bool IsGrounded()
     {
@@ -40,6 +63,19 @@ public class PlayerController : MonoBehaviour
 
     public FacingDirection GetFacingDirection()
     {
-        return FacingDirection.left;
+        if (playerMovementInput.x > 0)
+        {
+            return FacingDirection.right;
+        }
+        if (playerMovementInput.x < 0)
+        {
+            return FacingDirection.left;
+        }
+        else
+        {
+            return FacingDirection.right;
+        }
+        
+        
     }
 }
