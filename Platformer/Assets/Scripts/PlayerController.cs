@@ -58,7 +58,8 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        return true;
+
+        return false;
     }
 
     public FacingDirection GetFacingDirection()
