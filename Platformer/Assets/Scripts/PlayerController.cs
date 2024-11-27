@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
 
     public float terminalSpeed = 2f;
 
+    public float coyoteTime = 0.25f;
+
     
     public float timeToReachMaxSpeed = 1;
     public float maxSpeed = 5;
@@ -58,10 +60,19 @@ public class PlayerController : MonoBehaviour
         }
 
         
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.Space) && (IsGrounded() || coyoteTime > 0))
         {
             isJumping = true;
             rb.gravityScale = 0;
+        }
+
+        if (!IsGrounded())
+        {
+            coyoteTime -= Time.deltaTime;
+        }
+        else
+        {
+            coyoteTime = 0.25f;
         }
 
         //velocity = playerInput;

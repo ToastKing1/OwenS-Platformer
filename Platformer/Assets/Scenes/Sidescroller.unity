@@ -1701,6 +1701,7 @@ MonoBehaviour:
   apexHeight: 0.1
   apexTime: 0.1
   terminalSpeed: 15
+  coyoteTime: 0.25
   timeToReachMaxSpeed: 1
   maxSpeed: 5
 --- !u!4 &1433354315
