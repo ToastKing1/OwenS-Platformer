@@ -10,16 +10,21 @@ public class PlayerController : MonoBehaviour
     public bool isJumping;
     public float maxJumpTime;
 
-    public float gravity = 2;
-
     public float currentJumpTime;
 
-    /*
-    public float timeToReachMaxSpeed;
-    public float maxSpeed;
+    public float apexHeight;
+
+    public float apexTime = 0.1f;
+
+    public float terminalSpeed = 2f;
+
+    
+    public float timeToReachMaxSpeed = 1;
+    public float maxSpeed = 5;
 
     private float acceleration;
-    */
+    
+
     public enum FacingDirection
     {
         left, right
@@ -28,7 +33,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //acceleration = maxSpeed / timeToReachMaxSpeed;
+        acceleration = maxSpeed / timeToReachMaxSpeed;
 
     }
 
@@ -41,11 +46,11 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKey(KeyCode.A))
         {
-            playerInput = Vector3.left;
+            playerInput = Vector3.left * 3;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            playerInput = Vector3.right;
+            playerInput = Vector3.right * 3;
         }
         else
         {
@@ -56,40 +61,45 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             isJumping = true;
+            rb.gravityScale = 0;
         }
 
-        
-            if (!IsGrounded() && !isJumping)
-            {
-                playerInput.y -= gravity;
-            }
-
-        
-        
-        velocity = playerInput;
+        //velocity = playerInput;
         MovementUpdate(playerInput);
     }
 
     private void MovementUpdate(Vector2 playerInput)
-    {
-        
+    {   
         if (isJumping == true && maxJumpTime > currentJumpTime)
         {
-            playerInput.y += 2;
+            rb.gravityScale = 0;
+            playerInput.y += 1 + acceleration;
+            apexTime = 0.1f;
             currentJumpTime += 0.5f * Time.deltaTime;
         }
         else
         {
+            if (apexTime > 0)
+            {
+                apexTime -= 1 * Time.deltaTime;
+                rb.gravityScale = 0;
+            }
+            else
+            {
+                rb.gravityScale = 1;
+            }
+            
             isJumping = false;
             currentJumpTime = 0;
         }
 
-        Debug.Log(playerInput.y);
 
-        transform.position += new Vector3(playerInput.x*2, playerInput.y) * Time.deltaTime;
+        if (rb.velocity.y < -terminalSpeed)
+        {
+            rb.velocity = new Vector2(velocity.x, -terminalSpeed);
+        }
 
-
-        Debug.Log(IsGrounded());
+        transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
     }
 public bool IsWalking()
     {
