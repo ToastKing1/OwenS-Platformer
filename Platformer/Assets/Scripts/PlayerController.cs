@@ -25,12 +25,21 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 5;
 
     private float acceleration;
-    
+
+    public int health = 10;
 
     public enum FacingDirection
     {
         left, right
     }
+    public FacingDirection currentFacingDirection = FacingDirection.right;
+
+    public enum CharacterState
+    {
+        idle, walk, jump, die
+    }
+    public CharacterState currentCharacterState = CharacterState.idle;
+    public CharacterState previousCharacterState = CharacterState.idle;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +51,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (previousCharacterState != currentCharacterState)
+        {
+
+        }
+        previousCharacterState = currentCharacterState;
+
+        GetFacingDirection();
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
         Vector2 playerInput = new Vector2();
@@ -73,6 +89,47 @@ public class PlayerController : MonoBehaviour
         else
         {
             coyoteTime = 0.25f;
+        }
+
+        switch (currentCharacterState)
+        {
+            case CharacterState.die:
+                // Do Nothing (:
+                break;
+            case CharacterState.jump:
+                if (IsGrounded())
+                {
+                    if (IsWalking()) {
+                        currentCharacterState = CharacterState.walk;
+                    }
+                    else
+                    {
+                        currentCharacterState = CharacterState.idle;
+                    }
+                }
+                break;
+            case CharacterState.walk:
+                if (!IsWalking()) {
+                    currentCharacterState = CharacterState.idle;
+                }
+                if (!IsGrounded()) {
+                    currentCharacterState = CharacterState.jump;
+                }
+                break;
+            case CharacterState.idle:
+                //Are we walking?
+                if (IsWalking()) {
+                    currentCharacterState = CharacterState.walk;
+                }
+                //Are we jumping?
+                if (!IsGrounded()) {
+                    currentCharacterState = CharacterState.jump;
+                }
+                break;
+        }
+        if (IsDead())
+        {
+            currentCharacterState = CharacterState.die;
         }
 
         //velocity = playerInput;
@@ -110,7 +167,11 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(velocity.x, -terminalSpeed);
         }
 
+        //velocity += playerInput * acceleration * Time.deltaTime;
+
         transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
+
+        //rb.velocity = velocity;
     }
 public bool IsWalking()
     {
@@ -124,20 +185,24 @@ public bool IsWalking()
     }
     public bool IsGrounded()
     {
-       
-
-
         Debug.DrawRay(transform.position, Vector3.down, Color.red);
 
-        
-
         return Physics2D.Raycast(transform.position, Vector3.down, 0.7f);
+    }
 
+    public bool IsDead()
+    {
+        return health <= 0;
+    }
 
+    public void onDeathAnimationComplete()
+    {
+        gameObject.SetActive(false);
     }
 
     public FacingDirection GetFacingDirection()
     {
+        Debug.Log(velocity.x);
         if (velocity.x > 0)
         {
             return FacingDirection.right;
@@ -146,11 +211,7 @@ public bool IsWalking()
         {
             return FacingDirection.left;
         }
-        else
-        {
-            return FacingDirection.right;
-        }
-        
+        return currentFacingDirection;
         
     }
 }
