@@ -57,6 +57,7 @@ public class PlayerVisuals : MonoBehaviour
 
         switch (playerController.currentFacingDirection)
         {
+            
             case PlayerController.FacingDirection.left:
                 bodyRenderer.flipX = true;
                 break;

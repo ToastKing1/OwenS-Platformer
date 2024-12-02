@@ -9,15 +9,14 @@ public class PlayerController : MonoBehaviour
 
     public bool isJumping;
     public float maxJumpTime;
-
+    public float jumpSpeed;
     public float currentJumpTime;
 
+    public float moveSpeed = 1;
+
     public float apexHeight;
-
     public float apexTime = 0.1f;
-
     public float terminalSpeed = 2f;
-
     public float coyoteTime = 0.25f;
 
     
@@ -57,18 +56,18 @@ public class PlayerController : MonoBehaviour
         }
         previousCharacterState = currentCharacterState;
 
-        GetFacingDirection();
+        currentFacingDirection = GetFacingDirection();
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
         Vector2 playerInput = new Vector2();
         
         if (Input.GetKey(KeyCode.A))
         {
-            playerInput = Vector3.left * 3;
+            playerInput = Vector3.left * moveSpeed;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            playerInput = Vector3.right * 3;
+            playerInput = Vector3.right * moveSpeed;
         }
         else
         {
@@ -134,6 +133,7 @@ public class PlayerController : MonoBehaviour
 
         //velocity = playerInput;
         MovementUpdate(playerInput);
+        
     }
 
     private void MovementUpdate(Vector2 playerInput)
@@ -141,9 +141,9 @@ public class PlayerController : MonoBehaviour
         if (isJumping == true && maxJumpTime > currentJumpTime)
         {
             rb.gravityScale = 0;
-            playerInput.y += 1 + acceleration;
+            playerInput.y += jumpSpeed + acceleration * Time.deltaTime;
             apexTime = 0.1f;
-            currentJumpTime += 0.5f * Time.deltaTime;
+            currentJumpTime += 1f * Time.deltaTime;
         }
         else
         {
@@ -167,11 +167,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(velocity.x, -terminalSpeed);
         }
 
-        //velocity += playerInput * acceleration * Time.deltaTime;
+        velocity = playerInput;
 
-        transform.position += new Vector3(playerInput.x, playerInput.y) * Time.deltaTime;
-
-        //rb.velocity = velocity;
+        transform.position += new Vector3(velocity.x, velocity.y) * acceleration * Time.deltaTime;
     }
 public bool IsWalking()
     {
@@ -202,7 +200,6 @@ public bool IsWalking()
 
     public FacingDirection GetFacingDirection()
     {
-        Debug.Log(velocity.x);
         if (velocity.x > 0)
         {
             return FacingDirection.right;

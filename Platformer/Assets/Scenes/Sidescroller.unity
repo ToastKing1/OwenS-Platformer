@@ -1696,7 +1696,9 @@ MonoBehaviour:
   velocity: {x: 0, y: 0}
   rb: {fileID: 1433354318}
   isJumping: 0
-  maxJumpTime: 0.5
+  maxJumpTime: 0.35
+  jumpSpeed: 2
+  moveSpeed: 1
   currentJumpTime: 0
   apexHeight: 0.1
   apexTime: 0.1
@@ -1704,6 +1706,10 @@ MonoBehaviour:
   coyoteTime: 0.25
   timeToReachMaxSpeed: 1
   maxSpeed: 5
+  health: 10
+  currentFacingDirection: 1
+  currentCharacterState: 0
+  previousCharacterState: 0
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
