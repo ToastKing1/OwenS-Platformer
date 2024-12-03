@@ -1697,7 +1697,7 @@ MonoBehaviour:
   rb: {fileID: 1433354318}
   isJumping: 0
   maxJumpTime: 0.35
-  jumpSpeed: 4
+  jumpSpeed: 5
   currentJumpTime: 0
   moveSpeed: 3
   dashSpeed: 5
