@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public float jumpSpeed;
     public float currentJumpTime;
 
-    public float moveSpeed = 1;
+    public float moveSpeed = 3;
     public float dashSpeed = 2;
 
     public float apexHeight;
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 
     
     public float timeToReachMaxSpeed = 1;
-    public float maxSpeed = 5;
+    public float maxSpeed = 3.5f;
 
     private float acceleration;
 
@@ -64,11 +64,11 @@ public class PlayerController : MonoBehaviour
         
         if (Input.GetKey(KeyCode.A))
         {
-            playerInput = Vector3.left * moveSpeed;
+            playerInput = Vector3.left * moveSpeed * acceleration;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            playerInput = Vector3.right * moveSpeed;
+            playerInput = Vector3.right * moveSpeed * acceleration;
         }
         else
         {
@@ -189,7 +189,18 @@ public class PlayerController : MonoBehaviour
 
         velocity = playerInput;
 
-        rb.velocity = new Vector3(velocity.x, velocity.y) * acceleration * Time.deltaTime;
+        rb.velocity += new Vector2(velocity.x, velocity.y) * acceleration * Time.deltaTime;
+
+        if (rb.velocity.x > maxSpeed)
+        {
+            rb.velocity = new Vector2(maxSpeed, rb.velocity.y);
+        }
+        else if (rb.velocity.x < -maxSpeed)
+        {
+            rb.velocity = new Vector2(-maxSpeed, rb.velocity.y);
+        }
+
+        Debug.Log(rb.velocity.x);
     }
 public bool IsWalking()
     {
@@ -203,9 +214,14 @@ public bool IsWalking()
     }
     public bool IsGrounded()
     {
-        Debug.DrawRay(transform.position, Vector3.down, Color.red);
+        Vector2 RaycastPositionLeft = transform.position + new Vector3(-0.5f, 0);
+        Vector2 RaycastPositionRight = transform.position + new Vector3(0.5f, 0);
 
-        return Physics2D.Raycast(transform.position, Vector3.down, 0.7f);
+        Debug.DrawRay(RaycastPositionLeft, Vector3.down, Color.red);
+
+        Debug.DrawRay(RaycastPositionRight, Vector3.down, Color.red);
+
+        return Physics2D.Raycast(RaycastPositionLeft, Vector3.down, 0.7f) || Physics2D.Raycast(RaycastPositionRight, Vector3.down, 0.7f);
     }
 
     public bool IsDead()
