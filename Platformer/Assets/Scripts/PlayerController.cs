@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float currentJumpTime;
 
     public float moveSpeed = 1;
+    public float dashSpeed = 2;
 
     public float apexHeight;
     public float apexTime = 0.1f;
@@ -74,6 +75,23 @@ public class PlayerController : MonoBehaviour
             playerInput = Vector3.zero;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (playerInput.x == 0)
+            {
+                if (currentFacingDirection == FacingDirection.left)
+                {
+                    playerInput = Vector3.left * moveSpeed * dashSpeed;
+                }
+                else
+                {
+                    playerInput = Vector3.right * moveSpeed * dashSpeed;
+                }
+
+
+            }
+            playerInput = playerInput * dashSpeed;
+        }
         
         if (Input.GetKeyDown(KeyCode.Space) && (IsGrounded() || coyoteTime > 0))
         {
@@ -138,6 +156,8 @@ public class PlayerController : MonoBehaviour
 
     private void MovementUpdate(Vector2 playerInput)
     {   
+
+        // jump code
         if (isJumping == true && maxJumpTime > currentJumpTime)
         {
             rb.gravityScale = 0;
@@ -169,7 +189,7 @@ public class PlayerController : MonoBehaviour
 
         velocity = playerInput;
 
-        transform.position += new Vector3(velocity.x, velocity.y) * acceleration * Time.deltaTime;
+        rb.velocity = new Vector3(velocity.x, velocity.y) * acceleration * Time.deltaTime;
     }
 public bool IsWalking()
     {
