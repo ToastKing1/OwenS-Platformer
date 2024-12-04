@@ -1701,6 +1701,7 @@ MonoBehaviour:
   currentJumpTime: 0
   moveSpeed: 3
   dashSpeed: 5
+  dashTimer: 0
   apexHeight: 0.1
   apexTime: 0.1
   terminalSpeed: 15

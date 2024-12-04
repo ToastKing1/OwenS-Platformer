@@ -14,12 +14,15 @@ public class PlayerController : MonoBehaviour
 
     public float moveSpeed = 3;
     public float dashSpeed = 2;
+    public float dashTimer = 0f;
+    public bool isDashing = false;
 
     public float apexHeight;
     public float apexTime = 0.1f;
     public float terminalSpeed = 2f;
     public float coyoteTime = 0.25f;
 
+    
     
     public float timeToReachMaxSpeed = 1;
     public float maxSpeed = 3.5f;
@@ -75,7 +78,7 @@ public class PlayerController : MonoBehaviour
             playerInput = Vector3.zero;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        /*if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             if (playerInput.x == 0)
             {
@@ -91,8 +94,24 @@ public class PlayerController : MonoBehaviour
 
             }
             playerInput = playerInput * dashSpeed;
+        }*/
+
+        if (Input.GetKey(KeyCode.LeftShift) && dashTimer >= 1)
+        {
+            isDashing = true;
+            
+            maxSpeed = 5;
+            dashTimer = 0;
+        }
+        else
+        {
+             
         }
         
+
+
+
+
         if (Input.GetKeyDown(KeyCode.Space) && (IsGrounded() || coyoteTime > 0))
         {
             isJumping = true;
@@ -181,6 +200,26 @@ public class PlayerController : MonoBehaviour
             currentJumpTime = 0;
         }
 
+        // dashing code
+
+        if (isDashing == true && dashTimer < 0.25f)
+        {
+            if (currentFacingDirection == FacingDirection.left)
+            {
+                rb.AddForce(Vector3.left * dashSpeed * acceleration);
+            }
+            else
+            {
+                rb.AddForce(Vector3.right * dashSpeed * acceleration);
+            }   
+        }
+        else 
+        {
+            maxSpeed = 3.5f;
+        }
+        dashTimer += 1 * Time.deltaTime;
+        dashTimer = Mathf.Clamp(dashTimer, 0, 1);
+        // gravity terminal speed
 
         if (rb.velocity.y < -terminalSpeed)
         {
@@ -191,6 +230,8 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity += new Vector2(velocity.x, velocity.y) * acceleration * Time.deltaTime;
 
+        // velocity.x maxSpeed code
+
         if (rb.velocity.x > maxSpeed)
         {
             rb.velocity = new Vector2(maxSpeed, rb.velocity.y);
@@ -199,8 +240,6 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(-maxSpeed, rb.velocity.y);
         }
-
-        Debug.Log(rb.velocity.x);
     }
 public bool IsWalking()
     {
