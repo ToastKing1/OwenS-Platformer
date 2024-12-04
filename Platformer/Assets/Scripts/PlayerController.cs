@@ -202,6 +202,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.gravityScale = 1;
             }
+            //rocket fuel recharges when falling
             rocketBootsFuel = Mathf.Clamp(rocketBootsFuel + 1*Time.deltaTime, 0, 1);
         }
 

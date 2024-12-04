@@ -4,25 +4,32 @@ using UnityEngine;
 
 public class Blackhole : MonoBehaviour
 {
-    public Rigidbody2D rb;
-    public CircleCollider2D circleCollider;
     public GameObject player;
     public Rigidbody2D playerRb;
-    float distToPlayer;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public bool detected = false;
 
-    // Update is called once per frame
     void Update()
     {
-       /*if (Physics2D.Raycast(transform.position, player.transform.position, 1f).collider == true)
+       if (detected == true)
         {
             playerRb.AddRelativeForce(transform.position - player.transform.position);
-        }*/
-
-       
+        }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        player.SetActive(false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {        
+        detected = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        detected = false;
+    }
+
+   
 }
