@@ -22,10 +22,15 @@ public class PlayerController : MonoBehaviour
     public float terminalSpeed = 2f;
     public float coyoteTime = 0.25f;
 
+    public float rocketBootsFuel = 1f;
+    public float rocketBootsSpeed = 3.5f;
+    public bool rocketBootsFlying = false;
+
+    public SpriteRenderer rocketBoots;
     
     
     public float timeToReachMaxSpeed = 1;
-    public float maxSpeed = 3.5f;
+    public float maxSpeed = 0.75f;
 
     private float acceleration;
 
@@ -48,7 +53,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         acceleration = maxSpeed / timeToReachMaxSpeed;
-
+        rocketBoots.enabled = false;
     }
 
     // Update is called once per frame
@@ -78,24 +83,6 @@ public class PlayerController : MonoBehaviour
             playerInput = Vector3.zero;
         }
 
-        /*if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            if (playerInput.x == 0)
-            {
-                if (currentFacingDirection == FacingDirection.left)
-                {
-                    playerInput = Vector3.left * moveSpeed * dashSpeed;
-                }
-                else
-                {
-                    playerInput = Vector3.right * moveSpeed * dashSpeed;
-                }
-
-
-            }
-            playerInput = playerInput * dashSpeed;
-        }*/
-
         if (Input.GetKey(KeyCode.LeftShift) && dashTimer >= 1)
         {
             isDashing = true;
@@ -103,10 +90,7 @@ public class PlayerController : MonoBehaviour
             maxSpeed = 5;
             dashTimer = 0;
         }
-        else
-        {
-             
-        }
+
         
 
 
@@ -116,6 +100,11 @@ public class PlayerController : MonoBehaviour
         {
             isJumping = true;
             rb.gravityScale = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping && rocketBootsFuel > 0.8)
+        {
+            rocketBootsFlying = true;
         }
 
         if (!IsGrounded())
@@ -183,10 +172,28 @@ public class PlayerController : MonoBehaviour
             playerInput.y += jumpSpeed + acceleration * Time.deltaTime;
             apexTime = 0.1f;
             currentJumpTime += 1f * Time.deltaTime;
+            if (currentJumpTime >= maxJumpTime)
+            {
+                isJumping = false;
+                currentJumpTime = 0f;
+            }
+        }
+        else if (rocketBootsFlying)
+        {
+            rocketBoots.enabled = true;
+            rb.gravityScale = 0;
+            playerInput.y += rocketBootsSpeed + acceleration/2 * Time.deltaTime;
+            rocketBootsFuel -= 1 * Time.deltaTime;
+            if (rocketBootsFuel <= 0)
+            {
+                rocketBoots.enabled = false;
+                rocketBootsFlying = false;
+            }
         }
         else
         {
-            if (apexTime > 0)
+            
+            if (apexTime > 0 && !isJumping)
             {
                 apexTime -= 1 * Time.deltaTime;
                 rb.gravityScale = 0;
@@ -195,9 +202,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.gravityScale = 1;
             }
-            
-            isJumping = false;
-            currentJumpTime = 0;
+            rocketBootsFuel = Mathf.Clamp(rocketBootsFuel + 1*Time.deltaTime, 0, 1);
         }
 
         // dashing code
@@ -224,6 +229,10 @@ public class PlayerController : MonoBehaviour
         if (rb.velocity.y < -terminalSpeed)
         {
             rb.velocity = new Vector2(velocity.x, -terminalSpeed);
+        }
+        if (rb.velocity.y > terminalSpeed)
+        {
+            rb.velocity = new Vector2(velocity.x, terminalSpeed);
         }
 
         velocity = playerInput;
